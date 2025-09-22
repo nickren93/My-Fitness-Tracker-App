@@ -14,6 +14,10 @@ class User(db.Model, SerializerMixin):
     _password_hash = db.Column(db.String)
     age = db.Column(db.Integer)
 
+    logs = db.relationship(
+        'Log', back_populates='user', cascade='all, delete-orphan')
+
+    serialize_rules = ('-logs.user',)
 
     @hybrid_property
     def password_hash(self):
@@ -38,6 +42,10 @@ class Workout(db.Model, SerializerMixin):
     difficulty = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
 
+    logs = db.relationship(
+        'Log', back_populates='workout', cascade='all, delete-orphan')
+
+    serialize_rules = ('-logs.workout',)
 
     @validates("name", "difficulty", "description")
     def validate_all_colums_for_workout(self, key, value):
@@ -45,3 +53,24 @@ class Workout(db.Model, SerializerMixin):
             raise ValueError("A workout must have a name, difficulty level and a description.")
         return value
 
+
+class Log(db.Model, SerializerMixin):
+    __tablename__='logs'
+
+    id = db.Column(db.Integer, primary_key=True)
+    note = db.Column(db.String)
+    date = db.Column(db.String, nullable=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    workout_id = db.Column(db.Integer, db.ForeignKey('workouts.id'))
+
+    user = db.relationship('User', back_populates='logs')
+    workout = db.relationship('Workout', back_populates='logs')
+
+    serialize_rules = ('-user.logs', '-workout.logs',)
+
+    @validates("date", "user_id", "workout_id")
+    def date_validate_user_id_and_workout_id(self, key, value):
+        if value is None:
+            raise ValueError("A log must have a date, user id and a workout id.")
+        return value
