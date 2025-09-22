@@ -28,3 +28,20 @@ class User(db.Model, SerializerMixin):
     def authenticate(self, password):
         return bcrypt.check_password_hash(
             self._password_hash, password.encode('utf-8'))
+    
+
+class Workout(db.Model, SerializerMixin):
+    __tablename__='workouts'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    difficulty = db.Column(db.String, nullable=False)
+    description = db.Column(db.String, nullable=False)
+
+
+    @validates("name", "difficulty", "description")
+    def validate_all_colums_for_workout(self, key, value):
+        if value is None or value.strip()=="":
+            raise ValueError("A workout must have a name, difficulty level and a description.")
+        return value
+
