@@ -17,7 +17,10 @@ class User(db.Model, SerializerMixin):
     logs = db.relationship(
         'Log', back_populates='user', cascade='all, delete-orphan')
 
-    serialize_rules = ('-logs.user',)
+    serialize_rules = ('-logs.',)
+
+    workouts = association_proxy('logs', 'workout',
+                                 creator=lambda workout_obj: Log(workout=workout_obj))
 
     @hybrid_property
     def password_hash(self):
@@ -47,6 +50,9 @@ class Workout(db.Model, SerializerMixin):
 
     serialize_rules = ('-logs.workout',)
 
+    users = association_proxy('logs', 'user',
+                                 creator=lambda user_obj: Log(user=user_obj))
+
     @validates("name", "difficulty", "description")
     def validate_all_colums_for_workout(self, key, value):
         if value is None or value.strip()=="":
@@ -58,7 +64,7 @@ class Log(db.Model, SerializerMixin):
     __tablename__='logs'
 
     id = db.Column(db.Integer, primary_key=True)
-    note = db.Column(db.String)
+    note = db.Column(db.String, default="No note provided")
     date = db.Column(db.String, nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
