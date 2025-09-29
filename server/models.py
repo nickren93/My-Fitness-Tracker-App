@@ -17,7 +17,7 @@ class User(db.Model, SerializerMixin):
     logs = db.relationship(
         'Log', back_populates='user', cascade='all, delete-orphan')
 
-    serialize_rules = ('-logs.',)
+    serialize_rules = ('-logs.user',)
 
     workouts = association_proxy('logs', 'workout',
                                  creator=lambda workout_obj: Log(workout=workout_obj))

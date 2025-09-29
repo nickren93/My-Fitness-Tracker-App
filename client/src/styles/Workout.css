@@ -1,0 +1,26 @@
+.workout-card {
+  background: linear-gradient(145deg, #ffffff, #f9f9f9);
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 16px 0;               /* spacing between workouts */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.workout-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.workout-card h3 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  color: #3a6186;
+}
+
+.workout-card p {
+  margin: 6px 0;
+  color: #555;
+  line-height: 1.4;
+}
