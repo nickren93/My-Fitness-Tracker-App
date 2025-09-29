@@ -141,13 +141,10 @@ class NewLog(Resource):
         return {'errors': ["validation errors"]}, 400
 
 
-class Users(Resource):
-    def get(self):
-        # workouts = [{"id": workout.id, "name": workout.name, "difficulty": workout.difficulty, \
-        #              "description": workout.description} 
-        #            for workout in Workout.query.all()]
-        users= [user.to_dict() for user in User.query.all()]
-        return make_response(users, 200)
+# class Users(Resource):
+#     def get(self):
+#         users= [user.to_dict() for user in User.query.all()]
+#         return make_response(users, 200)
 
 
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
@@ -156,7 +153,7 @@ api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(Workouts, '/workouts', endpoint='workouts')
 api.add_resource(NewLog, '/newlog', endpoint='newlog')
-api.add_resource(Users, '/users', endpoint='users')
+# api.add_resource(Users, '/users', endpoint='users')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

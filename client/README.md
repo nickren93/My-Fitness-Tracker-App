@@ -74,6 +74,8 @@ my-fitness-tracker/
 │
 └── README.md
 
+---
+
 ## ⚙️ Setup & Installation
 
 ### Frontend (React)
@@ -103,6 +105,7 @@ my-fitness-tracker/
 
    note: The frontend runs on http://localhost:3000 and proxies API requests to the Flask backend on http://localhost:5555.
 
+---
 
 ## 🔑 API Endpoints
 
@@ -120,6 +123,7 @@ my-fitness-tracker/
 
 ### POST /logs → create new log
 
+---
 
 ##  📝 Example Usage
 
@@ -129,6 +133,7 @@ my-fitness-tracker/
 
 3. View Logs → see list of your past logs
 
+---
 
 ## 📌 Future Improvements
 
@@ -140,6 +145,7 @@ my-fitness-tracker/
 
 4. Deploy to cloud (Heroku/Render for backend + Netlify/Vercel for frontend).
 
+---
 
 ## 👨‍💻 Author
 
