@@ -9,9 +9,6 @@ function SignUpForm({ onLogin }) {
   const [errors, setErrors] = useState([]);
 
   const navigate = useNavigate();
-  // const [isLoading, setIsLoading] = useState(false);
-
-  // const { setUser } = useOutletContext()
 
   //----------------------------------------------------------------------------------
   const formSchema = yup.object().shape({

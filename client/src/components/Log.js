@@ -24,6 +24,7 @@ function Log({ log, onDelete }) {
             //   logs: [...user.logs, newlog]
             // });
             setCurrentLog(newlog)
+            setEdit(false)
             console.log(newlog.user)
         })
     }
