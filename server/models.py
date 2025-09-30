@@ -16,11 +16,17 @@ class User(db.Model, SerializerMixin):
 
     logs = db.relationship(
         'Log', back_populates='user', cascade='all, delete-orphan')
+    
+    workouts = db.relationship(
+        'Workout', secondary='logs', viewonly=True, back_populates='users'
+    )
 
-    serialize_rules = ('-logs.user',)
+    serialize_rules = ('-logs', '-workouts.users')
 
-    workouts = association_proxy('logs', 'workout',
-                                 creator=lambda workout_obj: Log(workout=workout_obj))
+    # serialize_rules = ('-logs.user',)
+
+    # workouts = association_proxy('logs', 'workout',
+    #                              creator=lambda workout_obj: Log(workout=workout_obj))
 
     @hybrid_property
     def password_hash(self):
@@ -41,17 +47,25 @@ class Workout(db.Model, SerializerMixin):
     __tablename__='workouts'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable=False, unique=True)
     difficulty = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
 
     logs = db.relationship(
         'Log', back_populates='workout', cascade='all, delete-orphan')
+    
+    users = db.relationship(
+        'User', secondary='logs', viewonly=True, back_populates='workouts'
+    )
 
-    serialize_rules = ('-logs.workout',)
+    # serialize_rules = ('-logs','-users.workouts')
+    serialize_rules = ('-logs.user', '-logs.workout','-users.workouts')
 
-    users = association_proxy('logs', 'user',
-                                 creator=lambda user_obj: Log(user=user_obj))
+
+    # serialize_rules = ('-logs.workout',)
+
+    # users = association_proxy('logs', 'user',
+    #                              creator=lambda user_obj: Log(user=user_obj))
 
     @validates("name", "difficulty", "description")
     def validate_all_colums_for_workout(self, key, value):

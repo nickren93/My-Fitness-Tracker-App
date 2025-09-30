@@ -120,7 +120,8 @@ class Workouts(Resource):
             return {'errors': ["validation errors"]}, 400
 
 
-class NewLog(Resource):
+class Logs(Resource):
+
     def post(self):
         data = request.get_json()
         user = User.query.filter(User.id == data.get('user_id')).first()
@@ -139,12 +140,63 @@ class NewLog(Resource):
                 return {'errors': ["validation errors"]}, 400
             
         return {'errors': ["validation errors"]}, 400
+    
+    def patch(self):
+        data = request.get_json()
+        log = Log.query.filter(Log.id == data.get('id')).first()
+
+        if log:
+            try:
+                log.date = data.get('date')
+                log.note = data.get('note')
+
+                db.session.add(log)
+                db.session.commit()
+                return make_response(log.to_dict(), 202)
+            except ValueError:
+                db.session.rollback()
+                return {'errors': ["validation errors"]}, 400
+
+        return {'error': 'Log not found'}, 404
+    
+    def delete(self):
+        data = request.get_json()
+        log = Log.query.filter(Log.id == data.get('id')).first()
+
+        if log:
+            try:
+                db.session.delete(log)
+                db.session.commit()
+                return {}, 204
+            except Exception as e:
+                db.session.rollback()
+                return {'errors': [str(e)]}, 400
+
+        return {'error': 'Log not found'}, 404
+    
+
+class LogByID(Resource):
+
+    def get(self, user_id, workout_id):
+
+        logs = Log.query.filter(
+            Log.user_id == user_id,
+            Log.workout_id == workout_id
+        ).all()
+
+        return make_response([log.to_dict() for log in logs], 200)
+
+        # if logs:
+        #     return make_response([log.to_dict() for log in logs], 200)
+
+        # return {'error': 'Log not found'}, 404
+    
 
 
-# class Users(Resource):
-#     def get(self):
-#         users= [user.to_dict() for user in User.query.all()]
-#         return make_response(users, 200)
+class Users(Resource):
+    def get(self):
+        users= [user.to_dict() for user in User.query.all()]
+        return make_response(users, 200)
 
 
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
@@ -152,8 +204,9 @@ api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(Workouts, '/workouts', endpoint='workouts')
-api.add_resource(NewLog, '/newlog', endpoint='newlog')
-# api.add_resource(Users, '/users', endpoint='users')
+api.add_resource(Logs, '/logs', endpoint='logs')
+api.add_resource(LogByID, '/logs/<int:user_id>/<int:workout_id>', endpoint='log_by_id')
+api.add_resource(Users, '/users', endpoint='users')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
