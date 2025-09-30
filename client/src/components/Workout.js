@@ -1,7 +1,7 @@
 import '../styles/Workout.css';
 
 function Workout({ name, difficulty, description }) {
-    
+ 
     return (
         <div className="workout-card"> 
             <h2>{name}</h2>

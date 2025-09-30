@@ -1,12 +1,12 @@
 .footer {
-  display: flex;                  /* put items side by side */
-  justify-content: space-between; /* spread them evenly */
-  align-items: center;            /* vertically center */
-  position: fixed;                /* stick to bottom */
+  display: flex;                  
+  justify-content: space-between; 
+  align-items: center;            
+  position: fixed;                
   bottom: 0;
   left: 0;
   width: 100%;
-  background: linear-gradient(90deg, #3a6186, #89253e); /* nice gradient */
+  background: linear-gradient(90deg, #3a6186, #89253e); 
   color: #fff;
   padding: 12px 24px;
   font-size: 14px;

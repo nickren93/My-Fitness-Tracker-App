@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 
-function LoginForm({ onLogin }) {
+function LoginForm({ onLogin, setWorkouts }) {
 
   const [errors, setErrors] = useState([]);
 
@@ -32,6 +32,7 @@ function LoginForm({ onLogin }) {
         if (r.ok) {
             r.json().then((user) => {
               onLogin(user)
+              setWorkouts(user.workouts)
               navigate("/");
             });
         } else {

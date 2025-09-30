@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Switch, Route } from "react-router-dom";
 import Footer from "./Footer";
-import Home from "./Home"
 import { Outlet } from 'react-router-dom';
 import logo from './Logo_image.png';
 import Login from './Login';
-import { useOutletContext, Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import NavBar from './NavBar';
 import '../styles/App.css';
 
 function App() {
 
   const [user, setUser] = useState(null);
-  const [workouts, setWorkouts] = useState([]);
+  const [myWorkouts, setMyWorkouts] = useState([]);
   const [log, setLog] = useState(
       {
           note: "",
@@ -29,30 +27,45 @@ function App() {
     // auto-login
     fetch("/check_session").then((r) => {
       if (r.ok) {
-          r.json().then((user) => setUser(user));
+          r.json().then((user) => {
+            setUser(user)
+            setMyWorkouts(user.workouts)
+          });
       }
     });
-  }, []);
+  }, [log]);
 
 
 
-  function handleSubmit(log){
-    fetch(`/newlog`, {
+  function handleSubmit(newLog){
+    fetch(`/logs`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(log)
+        body: JSON.stringify(newLog)
     })
     .then(resp => resp.json())
-    .then(newlog =>{
-        setUser({
-          ...user,
-          logs: [...user.logs, newlog]
-        });
-        console.log(newlog.user)
+    .then(newLog =>{
+        // setUser({
+        //   ...user,
+        //   logs: [...user.logs, newlog]
+        // });
+        setLog(newLog)
+        console.log(newLog.user)
     })
   }
+
+  function refreshWorkouts() {
+    fetch("/check_session")
+      .then(r => r.json())
+      .then(user => {
+        setUser(user);
+        setMyWorkouts(user.workouts);
+        // if()
+        // navigate('/')
+      });
+}
 
   function logout(){
       fetch(`/logout`, {
@@ -78,7 +91,7 @@ function App() {
       });
   }
 
-  const contextData = { user, setUser, workouts, setWorkouts, log, setLog, handleSubmit, logout }
+  const contextData = { user, setUser, myWorkouts, log, setLog, handleSubmit, refreshWorkouts, logout }
 
   return (
     <main className="App">
@@ -90,9 +103,11 @@ function App() {
           This app allows you to track and plan their workouts to your daily routine!
       </p>
       {/* {user ? <NavBar logout={logout} /> : <Navigate to="/login" />} */}
-      {user ? <NavBar logout={logout} /> : <Login login={setUser} />}
-      <Outlet context={contextData} />
-      <Footer />
+      {user ? <NavBar logout={logout} /> : <Login login={setUser} setWorkouts={setMyWorkouts}/>}
+      <div className="page-content">
+        <Outlet context={contextData} />
+        <Footer />
+      </div>
     </main>
   )
 }

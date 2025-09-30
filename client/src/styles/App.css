@@ -14,3 +14,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+.page-content {
+  padding-bottom: 160px; 
+}

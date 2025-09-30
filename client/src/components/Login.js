@@ -3,7 +3,7 @@ import LoginForm from "./LoginForm";
 import SignUpForm from "./SignUpForm";
 import '../styles/Login.css';
 
-function Login( { login } ) {
+function Login( { login, setWorkouts } ) {
   const [showLogin, setShowLogin] = useState(true);
   // const { login } = useOutletContext();
 
@@ -11,7 +11,7 @@ function Login( { login } ) {
     <div>
       {showLogin ? (
         <>
-          <LoginForm onLogin={login} />
+          <LoginForm onLogin={login} setWorkouts={setWorkouts}/>
           <p>
             Don't have an account? &nbsp;
             <button color="secondary" onClick={() => setShowLogin(false)}>
