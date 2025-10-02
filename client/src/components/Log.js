@@ -2,7 +2,7 @@ import { useState } from 'react';
 import '../styles/Workout.css';
 
 
-function Log({ log, onDelete }) {
+function Log({ log, onDeleteLog }) {
     // const { user  } = useOutletContext();
     const [edit, setEdit] = useState(false);
     const [currentLog, setCurrentLog] = useState(log)
@@ -39,7 +39,7 @@ function Log({ log, onDelete }) {
         })
         .then(resp => {
             if (resp.ok) {
-                onDelete(currentLog.id); //!!
+                onDeleteLog(currentLog.id); //!!
                 console.log("Delete success");
             } else {
                 console.error("Failed to delete log");

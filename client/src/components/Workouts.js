@@ -24,7 +24,7 @@ function Workouts() {
 
   const onHandleSubmitNewWorkout = (e) => {
     e.preventDefault(); 
-    fetch(`/workouts`, {
+    fetch("/workouts", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

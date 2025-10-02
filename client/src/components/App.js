@@ -11,15 +11,15 @@ function App() {
 
   const [user, setUser] = useState(null);
   const [myWorkouts, setMyWorkouts] = useState([]);
-  const [log, setLog] = useState(
-      {
-          note: "",
-          date: "",
-          user_id: undefined,
-          workout_id: undefined
-      }
-  )
-  
+  // const [logs, setLogs] = useState([])
+  const [newLog, setNewLog] = useState({
+      note: "",
+      date: "",
+      user_id: undefined,
+      workout_id: undefined  
+  })
+
+  const [refreshFlag, setRefreshFlag] = useState(false);
 
   const navigate = useNavigate()
 
@@ -30,10 +30,11 @@ function App() {
           r.json().then((user) => {
             setUser(user)
             setMyWorkouts(user.workouts)
+            // setLogs(user.workouts.logs)
           });
       }
     });
-  }, [log]);
+  }, []);
 
 
 
@@ -47,25 +48,21 @@ function App() {
     })
     .then(resp => resp.json())
     .then(newLog =>{
-        // setUser({
-        //   ...user,
-        //   logs: [...user.logs, newlog]
-        // });
-        setLog(newLog)
-        console.log(newLog.user)
+        setNewLog(newLog)
+        setMyWorkouts(newLog.user.workouts)
     })
   }
 
-  function refreshWorkouts() {
-    fetch("/check_session")
-      .then(r => r.json())
-      .then(user => {
-        setUser(user);
-        setMyWorkouts(user.workouts);
-        // if()
-        // navigate('/')
-      });
-}
+  // function refreshWorkouts() {
+  //   fetch("/check_session")
+  //     .then(r => r.json())
+  //     .then(user => {
+  //       setUser(user);
+  //       setMyWorkouts(user.workouts);
+  //       // if()
+  //       // navigate('/')
+  //     });
+  // }
 
   function logout(){
       fetch(`/logout`, {
@@ -74,12 +71,6 @@ function App() {
               "Content-Type": "application/json"
           },
       })
-      // .then(resp => resp.json())
-      // .then(data =>{
-      //     setUser(null)
-      //     console.log(data)
-      //     navigate("/login");
-      // })
       .then((resp) => {
         if (resp.ok) {
             setUser(null);
@@ -91,7 +82,8 @@ function App() {
       });
   }
 
-  const contextData = { user, setUser, myWorkouts, log, setLog, handleSubmit, refreshWorkouts, logout }
+
+  const contextData = { user, setUser, myWorkouts, setMyWorkouts, handleSubmit, logout }
 
   return (
     <main className="App">

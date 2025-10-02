@@ -5,8 +5,14 @@ function NewLog() {
 
   const [workouts, setWorkouts] = useState([]);
   const [selected, setSelected] = useState("");
-  const { user, log, handleSubmit } = useOutletContext()
-  const [newLog, setNewLog] = useState(log);
+  const { user, handleSubmit } = useOutletContext()
+  // const [newLog, setNewLog] = useState(log);
+  const [newLog, setNewLog] = useState({
+      note: "",
+      date: "",
+      user_id: "",  
+      workout_id: ""   
+    });
 
 
   useEffect(() => {
@@ -37,11 +43,6 @@ function NewLog() {
       <h2>Select your option:</h2>
       <select value={selected} onChange={handleChange}>
         <option value="">-- Choose a workout --</option>
-        {/* {workouts.length > 0 ? (
-          workouts.map((workout) => (<option key={workout.id} value={workout.id}> {workout.name} </option>))
-        ) : (
-          <option value="">""</option>
-        )} */}
         {workouts.map((workout) => (<option key={workout.id} value={workout.id}> {workout.name} </option>))}
       </select>
 

@@ -20,8 +20,8 @@ function Home(){
     if (myWorkouts.length == 0){
         return(
             <div>
-                    <h2>You don't have any upcoming workout.</h2>
-                    <Link to={`/newlog`} className="view-profile">Create workout plan</Link>
+                <h2>You don't have any upcoming workout.</h2>
+                <Link to={`/newlog`} className="view-profile">Create workout plan</Link>
             </div>
         )
     }
@@ -29,7 +29,7 @@ function Home(){
     return(
         <div className="workout-list">
             <h2>Your upcoming workout:</h2>
-                { workoutsWithLogs.map((workout) => (<MyWorkout key={workout.id} user_id={user.id} name={workout.name} 
+                { myWorkouts.map((workout) => (<MyWorkout key={workout.id} user_id={user.id} name={workout.name} 
                 workout_id={workout.id}  difficulty={workout.difficulty} description={workout.description} />
             ))}
         </div>
