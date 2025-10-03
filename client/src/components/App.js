@@ -35,7 +35,7 @@ function App() {
   }, []);
 
 
-  function handleSubmit(newLog, selectedWorkout){
+  function handleSubmit(newLog, workoutToSubmit){
     fetch(`/logs`, {
         method: "POST",
         headers: {
@@ -45,25 +45,26 @@ function App() {
     })
     .then(resp => resp.json())
     .then(newLog =>{
-        setNewLog(newLog)
+        const newLogToShow = {...newLog, user_id: user.id}
+        setNewLog(newLogToShow)
         // setMyWorkouts(user.workouts)
         // setMyWorkouts()  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         //----------------------------------------------------------------------
-        const workoutToUpdate = myWorkouts.find(workout => workout.id == parseInt(selectedWorkout.id))
+        const workoutToUpdate = myWorkouts.find(workout => workout.id == parseInt(workoutToSubmit.id))
         if (workoutToUpdate){
           // workoutToUpdate.logs.append(newLog)
           const updatedWorkout = {
             ...workoutToUpdate,
-            logs: [...workoutToUpdate.logs, newLog]
+            logs: [...workoutToUpdate.logs, newLogToShow]
           };
           const newMyWorkouts = myWorkouts.map((workout) => (workout.id=== workoutToUpdate.id ? updatedWorkout : workout));
           setMyWorkouts(newMyWorkouts)
         }else{
           // selectedWorkout.logs.append(newLog)
           const newWorkout = {
-            ...selectedWorkout,
-            logs: [newLog]
+            ...workoutToSubmit,
+            logs: [newLogToShow]
           };
           // const newMyWorkouts = myWorkouts.append(selectedWorkout)
           // setMyWorkouts(newMyWorkouts)
@@ -84,6 +85,12 @@ function App() {
         if (resp.ok) {
             setUser(null);
             setMyWorkouts([])
+            setNewLog({
+                note: "",
+                date: "",
+                user_id: undefined,
+                workout_id: undefined  
+            })
             // navigate("/login");
             navigate("/");
         } else {

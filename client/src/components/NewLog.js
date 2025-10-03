@@ -29,7 +29,8 @@ function NewLog() {
   const onHandleSubmit = (e) => {
     e.preventDefault(); 
     const selectedWorkout = workouts.find(workout => workout.id == parseInt(selected))
-    handleSubmit(newLog, selectedWorkout)
+    const workoutToSubmit = { ...selectedWorkout, logs: [] };
+    handleSubmit(newLog, workoutToSubmit)
     setSelected("")
     setNewLog({
       note: "",

@@ -19,6 +19,7 @@ app.secret_key = b'?w\x85Z\x08Q\xbdO\xb8\xa9\xb65Kj\xa9_'
 @app.before_request
 def check_if_logged_in():
     user_id = session.get("user_id")
+    # public_endpoints = ['login', 'signup', 'check_session', 'workouts', 'users']  # for tesing !!!!!!
     public_endpoints = ['login', 'signup', 'check_session', 'workouts']
     if not user_id and request.endpoint not in public_endpoints:
         return {'error': 'Unauthorized'}, 401
@@ -35,7 +36,41 @@ class CheckSession(Resource):
         if user_id:
             user = User.query.filter(User.id == user_id).first()
             if user:
-                return user.to_dict(), 200
+                # ------------------------------------------
+                user_data = {
+                    "id": user.id,
+                    "username": user.username,
+                    "age": user.age,
+                    "workouts": []
+                }
+
+                for workout in user.workouts:
+                    # Filter logs to only those for this user
+                    user_logs = [
+                        {
+                            "id": log.id,
+                            "note": log.note,
+                            "date": log.date,
+                            "user_id": log.user_id,
+                            "workout_id": log.workout_id
+                        }
+                        for log in workout.logs
+                        if log.user_id == user.id
+                    ]
+
+                    workout_dict = {
+                        "id": workout.id,
+                        "name": workout.name,
+                        "difficulty": workout.difficulty,
+                        "description": workout.description,
+                        "logs": user_logs
+                    }
+
+                    user_data["workouts"].append(workout_dict)
+                # ---------------------------------------------
+                # return user.to_dict(), 200
+                return user_data, 200
+
         return {'error': 'Please Log in first!'}, 401
 
 
@@ -50,7 +85,36 @@ class Login(Resource):
 
         if user and user.authenticate(password):
             session['user_id'] = user.id
-            return user.to_dict(), 200
+
+            user_data = {
+                "id": user.id,
+                "username": user.username,
+                "age": user.age,
+                "workouts": []
+            }
+
+            for workout in user.workouts:
+                user_logs = [
+                    {
+                        "id": log.id,
+                        "note": log.note,
+                        "date": log.date,
+                        "user_id": log.user_id,
+                        "workout_id": log.workout_id
+                    }
+                    for log in workout.logs
+                    if log.user_id == user.id
+                ]
+                workout_dict = {
+                    "id": workout.id,
+                    "name": workout.name,
+                    "difficulty": workout.difficulty,
+                    "description": workout.description,
+                    "logs": user_logs
+                }
+                user_data["workouts"].append(workout_dict) 
+
+            return user_data, 200
 
         return {'error': 'Invalid username or password'}, 401
 
@@ -85,7 +149,14 @@ class Signup(Resource):
 
             session['user_id'] = user.id
 
-            return user.to_dict(), 201
+            user_data = {
+                "id": user.id,
+                "username": user.username,
+                "age": user.age,
+                "workouts": []
+            }
+
+            return user_data, 201
         
         except IntegrityError:
             db.session.rollback()
@@ -97,8 +168,32 @@ class Signup(Resource):
 
 class Workouts(Resource):
     def get(self):
-        workouts = [workout.to_dict() for workout in Workout.query.all()]
-        return make_response(workouts, 200)
+        # workouts = [workout.to_dict() for workout in Workout.query.all()]
+        # return make_response(workouts, 200)
+        user_id = session.get("user_id")
+        workouts = []
+
+        for workout in Workout.query.all():
+            workout_dict = workout.to_dict()
+            if user_id:
+                # Only include logs for the current user
+                workout_dict['logs'] = [
+                    {
+                        "id": log.id,
+                        "note": log.note,
+                        "date": log.date,
+                        "user_id": log.user_id,
+                        "workout_id": log.workout_id
+                    }
+                    for log in workout.logs
+                    if log.user_id == user_id
+                ]
+            else:
+                workout_dict['logs'] = []
+            workouts.append(workout_dict)
+
+        return workouts, 200
+
 
     def post(self):
         data = request.get_json() 
@@ -168,29 +263,48 @@ class Logs(Resource):
         return {'error': 'Log not found'}, 404
     
 
-# class LogByID(Resource):
 
-#     def get(self, user_id, workout_id):
-
-#         logs = Log.query.filter(
-#             Log.user_id == user_id,
-#             Log.workout_id == workout_id
-#         ).all()
-
-#         return make_response([log.to_dict() for log in logs], 200)
-
-#         # if logs:
-#         #     return make_response([log.to_dict() for log in logs], 200)
-
-#         # return {'error': 'Log not found'}, 404
-    
-
-
-# class Users(Resource):  # this route is only for testing!!
+# class Users(Resource):  # this route is only for testing !!!!!!!!!!!!!!!!!!!!!
 #     def get(self):
-#         users= [user.to_dict() for user in User.query.all()]
-#         return make_response(users, 200)
+#         # users= [user.to_dict() for user in User.query.all()]
+#         # return make_response(users, 200)
+#         users = User.query.all()
+#         users_data = []
 
+#         for user in users:
+#             user_data = {
+#                 "id": user.id,
+#                 "username": user.username,
+#                 "age": user.age,
+#                 "workouts": []
+#             }
+
+#             for workout in user.workouts:
+#                 user_logs = [
+#                     {
+#                         "id": log.id,
+#                         "note": log.note,
+#                         "date": log.date,
+#                         "user_id": log.user_id,
+#                         "workout_id": log.workout_id
+#                     }
+#                     for log in workout.logs
+#                     if log.user_id == user.id
+#                 ]
+
+#                 workout_dict = {
+#                     "id": workout.id,
+#                     "name": workout.name,
+#                     "difficulty": workout.difficulty,
+#                     "description": workout.description,
+#                     "logs": user_logs
+#                 }
+
+#                 user_data["workouts"].append(workout_dict)
+
+#             users_data.append(user_data)
+
+#         return users_data, 200
 
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Login, '/login', endpoint='login')
@@ -199,7 +313,7 @@ api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(Workouts, '/workouts', endpoint='workouts')
 api.add_resource(Logs, '/logs', endpoint='logs')
 # api.add_resource(LogByID, '/logs/<int:user_id>/<int:workout_id>', endpoint='log_by_id')
-# api.add_resource(Users, '/users', endpoint='users')  # this route is only for testing!!
+# api.add_resource(Users, '/users', endpoint='users')  # this route is only for testing !!!!!!!!!!
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
