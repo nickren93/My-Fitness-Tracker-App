@@ -59,7 +59,7 @@ class Workout(db.Model, SerializerMixin):
     )
 
     # serialize_rules = ('-logs','-users.workouts')
-    serialize_rules = ('-logs.user', '-logs.workout','-users.workouts')
+    serialize_rules = ('-logs.user', '-logs.workout','-users')
 
 
     # serialize_rules = ('-logs.workout',)

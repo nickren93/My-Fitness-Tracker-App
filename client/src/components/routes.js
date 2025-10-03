@@ -23,7 +23,8 @@ const routes = [
                 element: <NewLog />
             },
             {
-               path: '/logs/:user_id/:workout_id',
+            //    path: '/logs/:user_id/:workout_id', 
+               path:  '/workouts/:workout_id/logs',
                element: <Logs />
             },
             {

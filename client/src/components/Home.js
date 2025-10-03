@@ -14,7 +14,7 @@ function Home(){
     // const userWorkouts = user.logs.map((element) => element.workout)
     // const userWorkouts = user.workouts
 
-    const workoutsWithLogs = myWorkouts.filter((workout) => workout.logs && workout.logs.length > 0);
+    // const workoutsWithLogs = myWorkouts.filter((workout) => workout.logs && workout.logs.length > 0);
 
 
     if (myWorkouts.length == 0){

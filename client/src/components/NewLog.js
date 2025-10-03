@@ -5,13 +5,13 @@ function NewLog() {
 
   const [workouts, setWorkouts] = useState([]);
   const [selected, setSelected] = useState("");
-  const { user, handleSubmit } = useOutletContext()
+  const { handleSubmit } = useOutletContext()
   // const [newLog, setNewLog] = useState(log);
   const [newLog, setNewLog] = useState({
       note: "",
       date: "",
-      user_id: "",  
-      workout_id: ""   
+      // user_id: "",  // no need
+      workout_id: ""  
     });
 
 
@@ -23,17 +23,17 @@ function NewLog() {
 
   const handleChange = (e) => {
     setSelected(e.target.value);
-    setNewLog({...newLog, user_id: user.id, workout_id: e.target.value});
+    setNewLog({...newLog, workout_id: e.target.value});
   };
   
   const onHandleSubmit = (e) => {
     e.preventDefault(); 
-    handleSubmit(newLog)
+    const selectedWorkout = workouts.find(workout => workout.id == parseInt(selected))
+    handleSubmit(newLog, selectedWorkout)
     setSelected("")
     setNewLog({
       note: "",
       date: "",
-      user_id: user.id,  // keep current user
       workout_id: ""     // reset workout selection
     });
   };

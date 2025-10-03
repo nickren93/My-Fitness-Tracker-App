@@ -17,7 +17,14 @@ function Workouts() {
 
   useEffect(() => {
     fetch("/workouts")
-      .then((r) => r.json())
+      .then((r) => {
+        if(!r.ok){
+          return r.json().then((err) => {
+            throw new Error(err.error); // err = { error: "Please Log in first!" }
+          });
+        }
+        return r.json()
+      })
       .then(setWorkouts);
   }, []);
 
@@ -33,10 +40,6 @@ function Workouts() {
     })
     .then(resp => resp.json())
     .then(newWorkOut =>{
-        // setUser({
-        //   ...user,
-        //   logs: [...user.logs, newlog]
-        // });
         setWorkouts([
           ...workouts,
           newWorkOut
@@ -49,7 +52,6 @@ function Workouts() {
             description: ""
           }
         )
-        // navigate("/workouts")
     })
   };
 

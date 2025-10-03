@@ -19,8 +19,6 @@ function App() {
       workout_id: undefined  
   })
 
-  const [refreshFlag, setRefreshFlag] = useState(false);
-
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -37,8 +35,7 @@ function App() {
   }, []);
 
 
-
-  function handleSubmit(newLog){
+  function handleSubmit(newLog, selectedWorkout){
     fetch(`/logs`, {
         method: "POST",
         headers: {
@@ -49,20 +46,32 @@ function App() {
     .then(resp => resp.json())
     .then(newLog =>{
         setNewLog(newLog)
-        setMyWorkouts(newLog.user.workouts)
+        // setMyWorkouts(user.workouts)
+        // setMyWorkouts()  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        //----------------------------------------------------------------------
+        const workoutToUpdate = myWorkouts.find(workout => workout.id == parseInt(selectedWorkout.id))
+        if (workoutToUpdate){
+          // workoutToUpdate.logs.append(newLog)
+          const updatedWorkout = {
+            ...workoutToUpdate,
+            logs: [...workoutToUpdate.logs, newLog]
+          };
+          const newMyWorkouts = myWorkouts.map((workout) => (workout.id=== workoutToUpdate.id ? updatedWorkout : workout));
+          setMyWorkouts(newMyWorkouts)
+        }else{
+          // selectedWorkout.logs.append(newLog)
+          const newWorkout = {
+            ...selectedWorkout,
+            logs: [newLog]
+          };
+          // const newMyWorkouts = myWorkouts.append(selectedWorkout)
+          // setMyWorkouts(newMyWorkouts)
+          setMyWorkouts([...myWorkouts, newWorkout]);
+        }
+        //----------------------------------------------------------------------
     })
   }
-
-  // function refreshWorkouts() {
-  //   fetch("/check_session")
-  //     .then(r => r.json())
-  //     .then(user => {
-  //       setUser(user);
-  //       setMyWorkouts(user.workouts);
-  //       // if()
-  //       // navigate('/')
-  //     });
-  // }
 
   function logout(){
       fetch(`/logout`, {

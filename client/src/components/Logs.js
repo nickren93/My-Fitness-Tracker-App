@@ -5,38 +5,29 @@ import Log from "./Log";
 
 function Logs() {
 
+  const navigate = useNavigate()
+
+  // const { user_id, workout_id } = useParams();
+  const {  workout_id } = useParams(); //
+  const { user, myWorkouts, setMyWorkouts,  } = useOutletContext();
   const [logs, setLogs] = useState([])
   // const { refreshWorkouts  } = useOutletContext();
 
-  const navigate = useNavigate()
+  // useEffect(() => { //use the data
+  //   fetch(`/logs/${user_id}/${workout_id}`)
+  //     .then((r) => r.json())
+  //     .then((data)=> setLogs(data));
+  // }, []);
 
-  const { user_id, workout_id } = useParams();
-  const { setMyWorkouts } = useOutletContext();
-
+  const currentWorkout = myWorkouts.find(workout => workout.id == parseInt(workout_id))
+  // const currentWorkoutLogs = currentWorkout.logs
+  
   useEffect(() => {
-    fetch(`/logs/${user_id}/${workout_id}`)
-      .then((r) => r.json())
-      .then((data)=> setLogs(data));
+    if (currentWorkout) {
+      setLogs(currentWorkout.logs);
+    }
   }, []);
 
-  // function handleDeleteLog(id) {
-  //   setLogs((prevLogs) => prevLogs.filter((log) => log.id !== id));
-  //   refreshWorkouts();
-  //   if(logs.length == 0){
-  //     navigate("/")
-  //   }
-  // }
-
-  // function handleDeleteLog(id) {
-  //   setLogs((prevLogs) => {
-  //     const updatedLogs = prevLogs.filter((log) => log.id !== id);
-  //     if (updatedLogs.length === 0) {
-  //       refreshWorkouts(); 
-  //       navigate("/"); 
-  //     }
-  //     return updatedLogs;
-  //   });
-  // }
 
   function handleDeleteLog(id) {
     const updatedLogs = logs.filter((log) => log.id !== id);
@@ -45,6 +36,10 @@ function Logs() {
           setMyWorkouts(prev => prev.filter(w => w.id !== parseInt(workout_id)));
           navigate("/");
     }
+  }
+
+  if (!currentWorkout) {
+    return <h3>Loading workout logs...</h3>;
   }
 
   return (

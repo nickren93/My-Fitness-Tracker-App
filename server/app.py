@@ -16,31 +16,26 @@ app.secret_key = b'?w\x85Z\x08Q\xbdO\xb8\xa9\xb65Kj\xa9_'
 
 # Views go here!
 
+@app.before_request
+def check_if_logged_in():
+    user_id = session.get("user_id")
+    if not user_id and request.endpoint != 'login' and request.endpoint != 'signup' and request.endpoint != 'check_session':
+        return {'error': 'Unauthorized'}, 401
+
+
 @app.route('/')
 def index():
     return '<h1>Project Server</h1>'
 
 
-
 class CheckSession(Resource):
     def get(self):
-        user_id = session['user_id']
+        user_id = session.get('user_id')
         if user_id:
             user = User.query.filter(User.id == user_id).first()
             if user:
-                # return user.to_dict(rules=("logs", "logs.workout")), 200
                 return user.to_dict(), 200
         return {'error': 'Please Log in first!'}, 401
-
-    # def get(self):
-    #     print(session)
-    #     if session & session['user_id']:
-    #         user_id = session['user_id']
-    #         user = User.query.filter(User.id == user_id).first()
-    #         if user:
-    #             return user.to_dict(rules=("logs", "logs.workout")), 200
-    #     return {'error': 'Please Log in first!'}, 401
-
 
 
 class Login(Resource):
@@ -101,9 +96,6 @@ class Signup(Resource):
 
 class Workouts(Resource):
     def get(self):
-        # workouts = [{"id": workout.id, "name": workout.name, "difficulty": workout.difficulty, \
-        #              "description": workout.description} 
-        #            for workout in Workout.query.all()]
         workouts = [workout.to_dict() for workout in Workout.query.all()]
         return make_response(workouts, 200)
 
@@ -124,13 +116,13 @@ class Logs(Resource):
 
     def post(self):
         data = request.get_json()
-        user = User.query.filter(User.id == data.get('user_id')).first()
+        # user = User.query.filter(User.id == data.get('user_id')).first()
         workout = Workout.query.filter(Workout.id == data.get('workout_id')).first()
 
-        if user and workout:
+        if workout and session.get("user_id"):
             try:
                 new_log = Log(note=data.get('note'), date=data.get('date'), \
-                                user_id=data.get('user_id'), \
+                                user_id=session.get("user_id"), \
                                 workout_id=data.get('workout_id'))
                 db.session.add(new_log)
                 db.session.commit()
@@ -175,21 +167,21 @@ class Logs(Resource):
         return {'error': 'Log not found'}, 404
     
 
-class LogByID(Resource):
+# class LogByID(Resource):
 
-    def get(self, user_id, workout_id):
+#     def get(self, user_id, workout_id):
 
-        logs = Log.query.filter(
-            Log.user_id == user_id,
-            Log.workout_id == workout_id
-        ).all()
+#         logs = Log.query.filter(
+#             Log.user_id == user_id,
+#             Log.workout_id == workout_id
+#         ).all()
 
-        return make_response([log.to_dict() for log in logs], 200)
+#         return make_response([log.to_dict() for log in logs], 200)
 
-        # if logs:
-        #     return make_response([log.to_dict() for log in logs], 200)
+#         # if logs:
+#         #     return make_response([log.to_dict() for log in logs], 200)
 
-        # return {'error': 'Log not found'}, 404
+#         # return {'error': 'Log not found'}, 404
     
 
 
@@ -205,7 +197,7 @@ api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(Workouts, '/workouts', endpoint='workouts')
 api.add_resource(Logs, '/logs', endpoint='logs')
-api.add_resource(LogByID, '/logs/<int:user_id>/<int:workout_id>', endpoint='log_by_id')
+# api.add_resource(LogByID, '/logs/<int:user_id>/<int:workout_id>', endpoint='log_by_id')
 api.add_resource(Users, '/users', endpoint='users')
 
 if __name__ == '__main__':
