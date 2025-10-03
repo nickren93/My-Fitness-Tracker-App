@@ -19,7 +19,8 @@ app.secret_key = b'?w\x85Z\x08Q\xbdO\xb8\xa9\xb65Kj\xa9_'
 @app.before_request
 def check_if_logged_in():
     user_id = session.get("user_id")
-    if not user_id and request.endpoint != 'login' and request.endpoint != 'signup' and request.endpoint != 'check_session':
+    public_endpoints = ['login', 'signup', 'check_session', 'workouts']
+    if not user_id and request.endpoint not in public_endpoints:
         return {'error': 'Unauthorized'}, 401
 
 
@@ -185,10 +186,10 @@ class Logs(Resource):
     
 
 
-class Users(Resource):
-    def get(self):
-        users= [user.to_dict() for user in User.query.all()]
-        return make_response(users, 200)
+# class Users(Resource):  # this route is only for testing!!
+#     def get(self):
+#         users= [user.to_dict() for user in User.query.all()]
+#         return make_response(users, 200)
 
 
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
@@ -198,7 +199,7 @@ api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(Workouts, '/workouts', endpoint='workouts')
 api.add_resource(Logs, '/logs', endpoint='logs')
 # api.add_resource(LogByID, '/logs/<int:user_id>/<int:workout_id>', endpoint='log_by_id')
-api.add_resource(Users, '/users', endpoint='users')
+# api.add_resource(Users, '/users', endpoint='users')  # this route is only for testing!!
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

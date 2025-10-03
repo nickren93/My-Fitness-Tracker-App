@@ -66,7 +66,7 @@ function Log({ log, onDeleteLog }) {
                         <button type="submit">Submit</button>
                     </form>
 
-                    <button color="secondary" onClick={() => setEdit(true)}>
+                    <button color="secondary" onClick={() => setEdit(false)}>
                         Edit
                     </button>
                 </>

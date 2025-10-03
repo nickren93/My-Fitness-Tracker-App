@@ -83,6 +83,7 @@ function App() {
       .then((resp) => {
         if (resp.ok) {
             setUser(null);
+            setMyWorkouts([])
             // navigate("/login");
             navigate("/");
         } else {
@@ -104,11 +105,13 @@ function App() {
           This app allows you to track and plan their workouts to your daily routine!
       </p>
       {/* {user ? <NavBar logout={logout} /> : <Navigate to="/login" />} */}
-      {user ? <NavBar logout={logout} /> : <Login login={setUser} setWorkouts={setMyWorkouts}/>}
+      {user ?  
       <div className="page-content">
+        <NavBar logout={logout} />
         <Outlet context={contextData} />
-        <Footer />
       </div>
+      : <Login login={setUser} setWorkouts={setMyWorkouts}/>}
+      <Footer />
     </main>
   )
 }

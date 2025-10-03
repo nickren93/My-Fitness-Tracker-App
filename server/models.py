@@ -21,9 +21,7 @@ class User(db.Model, SerializerMixin):
         'Workout', secondary='logs', viewonly=True, back_populates='users'
     )
 
-    serialize_rules = ('-logs', '-workouts.users')
-
-    # serialize_rules = ('-logs.user',)
+    serialize_rules = ('-logs', '-workouts.users', '-_password_hash')
 
     # workouts = association_proxy('logs', 'workout',
     #                              creator=lambda workout_obj: Log(workout=workout_obj))
@@ -58,12 +56,10 @@ class Workout(db.Model, SerializerMixin):
         'User', secondary='logs', viewonly=True, back_populates='workouts'
     )
 
-    # serialize_rules = ('-logs','-users.workouts')
     serialize_rules = ('-logs.user', '-logs.workout','-users')
 
 
     # serialize_rules = ('-logs.workout',)
-
     # users = association_proxy('logs', 'user',
     #                              creator=lambda user_obj: Log(user=user_obj))
 

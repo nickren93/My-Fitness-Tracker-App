@@ -13,8 +13,6 @@ function Workouts() {
     }
   )
 
-  const { user } = useOutletContext();
-
   useEffect(() => {
     fetch("/workouts")
       .then((r) => {
@@ -83,7 +81,7 @@ function Workouts() {
 
       {workouts &&
         workouts.map((workout) => (
-          <Workout key={workout.id} user_id={user.id} workout_id={workout.id} name={workout.name} difficulty={workout.difficulty}
+          <Workout key={workout.id} workout_id={workout.id} name={workout.name} difficulty={workout.difficulty}
           description={workout.description} />
         ))
       }
