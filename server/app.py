@@ -85,7 +85,8 @@ class Login(Resource):
 
         if user and user.authenticate(password):
             session['user_id'] = user.id
-
+            # return user.to_dict(), 200
+            # --------------------------------------
             user_data = {
                 "id": user.id,
                 "username": user.username,
@@ -115,7 +116,7 @@ class Login(Resource):
                 user_data["workouts"].append(workout_dict) 
 
             return user_data, 200
-
+            # --------------------------------------
         return {'error': 'Invalid username or password'}, 401
 
 
@@ -148,15 +149,16 @@ class Signup(Resource):
             db.session.commit()
 
             session['user_id'] = user.id
-
+            # return user.to_dict(), 201
+            # --------------------------------------
             user_data = {
                 "id": user.id,
                 "username": user.username,
                 "age": user.age,
                 "workouts": []
             }
-
             return user_data, 201
+            # --------------------------------------
         
         except IntegrityError:
             db.session.rollback()

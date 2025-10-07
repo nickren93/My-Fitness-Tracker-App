@@ -35,44 +35,28 @@ function App() {
   }, []);
 
 
-  function handleSubmit(newLog, workoutToSubmit){
-    fetch(`/logs`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(newLog)
-    })
-    .then(resp => resp.json())
-    .then(newLog =>{
-        const newLogToShow = {...newLog, user_id: user.id}
-        setNewLog(newLogToShow)
-        // setMyWorkouts(user.workouts)
-        // setMyWorkouts()  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  function handleNewLog(newLog, workoutToSubmit){
+    const newLogToShow = {...newLog, user_id: user.id}
+    setNewLog(newLogToShow)
 
-        //----------------------------------------------------------------------
-        const workoutToUpdate = myWorkouts.find(workout => workout.id == parseInt(workoutToSubmit.id))
-        if (workoutToUpdate){
-          // workoutToUpdate.logs.append(newLog)
-          const updatedWorkout = {
-            ...workoutToUpdate,
-            logs: [...workoutToUpdate.logs, newLogToShow]
-          };
-          const newMyWorkouts = myWorkouts.map((workout) => (workout.id=== workoutToUpdate.id ? updatedWorkout : workout));
-          setMyWorkouts(newMyWorkouts)
-        }else{
-          // selectedWorkout.logs.append(newLog)
-          const newWorkout = {
-            ...workoutToSubmit,
-            logs: [newLogToShow]
-          };
-          // const newMyWorkouts = myWorkouts.append(selectedWorkout)
-          // setMyWorkouts(newMyWorkouts)
-          setMyWorkouts([...myWorkouts, newWorkout]);
-        }
-        //----------------------------------------------------------------------
-    })
+    const workoutToUpdate = myWorkouts.find(workout => workout.id == parseInt(workoutToSubmit.id))
+    if (workoutToUpdate){
+      const updatedWorkout = {
+        ...workoutToUpdate,
+        logs: [...workoutToUpdate.logs, newLogToShow]
+      };
+      const newMyWorkouts = myWorkouts.map((workout) => (workout.id=== workoutToUpdate.id ? updatedWorkout : workout));
+      setMyWorkouts(newMyWorkouts)
+    }else{
+
+      const newWorkout = {
+        ...workoutToSubmit,
+        logs: [newLogToShow]
+      };
+      setMyWorkouts([...myWorkouts, newWorkout]);
+    }
   }
+
 
   function logout(){
       fetch(`/logout`, {
@@ -100,7 +84,7 @@ function App() {
   }
 
 
-  const contextData = { user, setUser, myWorkouts, setMyWorkouts, handleSubmit, logout }
+  const contextData = { user, setUser, myWorkouts, setMyWorkouts, handleNewLog, logout }
 
   return (
     <main className="App">
@@ -124,3 +108,49 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
+
+// DO NOT WORRY ABOUT THE CODE BELOW, FOR MY OWN LEARNING AND RECORD PURPOSES !!!!
+
+// function handleSubmit(newLog, workoutToSubmit){
+//   fetch(`/logs`, {
+//       method: "POST",
+//       headers: {
+//           "Content-Type": "application/json"
+//       },
+//       body: JSON.stringify(newLog)
+//   })
+//   .then(resp => resp.json())
+//   .then(newLog =>{
+//       const newLogToShow = {...newLog, user_id: user.id}
+//       setNewLog(newLogToShow)
+//       // setMyWorkouts(user.workouts)
+//       // setMyWorkouts()  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+//       //----------------------------------------------------------------------
+//       const workoutToUpdate = myWorkouts.find(workout => workout.id == parseInt(workoutToSubmit.id))
+//       if (workoutToUpdate){
+//         // workoutToUpdate.logs.append(newLog)
+//         const updatedWorkout = {
+//           ...workoutToUpdate,
+//           logs: [...workoutToUpdate.logs, newLogToShow]
+//         };
+//         const newMyWorkouts = myWorkouts.map((workout) => (workout.id=== workoutToUpdate.id ? updatedWorkout : workout));
+//         setMyWorkouts(newMyWorkouts)
+//       }else{
+//         // selectedWorkout.logs.append(newLog)
+//         const newWorkout = {
+//           ...workoutToSubmit,
+//           logs: [newLogToShow]
+//         };
+//         // const newMyWorkouts = myWorkouts.append(selectedWorkout)
+//         // setMyWorkouts(newMyWorkouts)
+//         setMyWorkouts([...myWorkouts, newWorkout]);
+//       }
+//       //----------------------------------------------------------------------
+//   })
+// }

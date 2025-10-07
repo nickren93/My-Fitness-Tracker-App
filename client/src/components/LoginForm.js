@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 function LoginForm({ onLogin, setWorkouts }) {
 
-  const [errors, setErrors] = useState([]);
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
@@ -36,7 +36,7 @@ function LoginForm({ onLogin, setWorkouts }) {
               navigate("/");
             });
         } else {
-            r.json().then((err) => setErrors(err.errors));
+            r.json().then((err) => setError(err.error));
         }
       });
     },
@@ -69,6 +69,13 @@ function LoginForm({ onLogin, setWorkouts }) {
         <p style={{ color: "red" }}> {formik.errors.password}</p>
 
         <button type="submit">Submit</button>
+
+        {error && (
+          <div style={{ color: "red", marginTop: "10px" }}>
+              <p>{error}</p>
+            
+          </div>
+        )}
       </form>
 
     </div>
